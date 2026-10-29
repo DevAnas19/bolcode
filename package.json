@@ -1,0 +1,136 @@
+{
+  "name": "bolcode",
+  "displayName": "BolCode",
+  "description": "Bolo, code ho jayega. Edit code by speaking in Hinglish, powered by Gnani Prisma.",
+  "version": "0.0.1",
+  "publisher": "devanas19",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "bolcode.listen",
+        "title": "BolCode: Start / Stop Listening"
+      },
+      {
+        "command": "bolcode.setGnaniKey",
+        "title": "BolCode: Set Gnani API Key"
+      },
+      {
+        "command": "bolcode.setLlmKey",
+        "title": "BolCode: Set LLM API Key"
+      },
+      {
+        "command": "bolcode.selectMic",
+        "title": "BolCode: Select Microphone"
+      },
+      {
+        "command": "bolcode.testVoice",
+        "title": "BolCode: Test Voice Reply"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "bolcode.listen",
+        "key": "ctrl+alt+b",
+        "mac": "cmd+alt+b",
+        "when": "editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "title": "BolCode",
+      "properties": {
+        "bolcode.language": {
+          "type": "string",
+          "default": "en-IN",
+          "enum": [
+            "en-IN",
+            "hi-IN",
+            "gu-IN",
+            "mr-IN",
+            "pa-IN",
+            "bn-IN",
+            "ta-IN",
+            "te-IN",
+            "kn-IN",
+            "ml-IN"
+          ],
+          "description": "Prisma language code. en-IN accepts Hindi-English mixed speech and returns Latin script; try hi-IN too and compare."
+        },
+        "bolcode.ffmpegPath": {
+          "type": "string",
+          "default": "ffmpeg",
+          "description": "Path to the ffmpeg executable."
+        },
+        "bolcode.micDevice": {
+          "type": "string",
+          "default": "",
+          "description": "Microphone device. Use 'BolCode: Select Microphone'. Required on Windows."
+        },
+        "bolcode.maxRecordSeconds": {
+          "type": "number",
+          "default": 20,
+          "description": "Maximum length of one voice command (Prisma REST limit is 60s, ideal 30s)."
+        },
+        "bolcode.llm.baseUrl": {
+          "type": "string",
+          "default": "",
+          "description": "OpenAI-compatible base URL, e.g. https://api.openai.com/v1 or a local server hosting Evon."
+        },
+        "bolcode.llm.model": {
+          "type": "string",
+          "default": "",
+          "description": "Model name sent to the chat completions endpoint."
+        },
+        "bolcode.substitutions": {
+          "type": "array",
+          "default": [],
+          "description": "Prisma find-and-replace rules (max 10), e.g. [{\"patterns\":[\"एसिंक\"],\"replacement\":\"async\"}]"
+        },
+        "bolcode.voice.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Speak short replies in Hindi using Gnani Timbre (beta)."
+        },
+        "bolcode.voice.model": {
+          "type": "string",
+          "default": "timbre-v3.0",
+          "description": "Timbre model name."
+        },
+        "bolcode.voice.name": {
+          "type": "string",
+          "default": "Avinash",
+          "description": "Timbre voice name (see the voice catalog in Gnani docs)."
+        },
+        "bolcode.voice.language": {
+          "type": "string",
+          "default": "hi-IN",
+          "description": "Timbre language code."
+        },
+        "bolcode.voice.sampleRate": {
+          "type": "number",
+          "default": 24000,
+          "description": "Only used if Timbre returns raw audio without a header. Leave at 24000 unless the voice sounds too fast or slow."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.4.0"
+  }
+}

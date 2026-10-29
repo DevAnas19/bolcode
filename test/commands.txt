@@ -1,0 +1,40 @@
+is function ko async bana do
+error handling add karo
+variable ka naam badal ke userId karo
+is loop ko map se replace karo
+ye function ko arrow function me convert karo
+try catch block laga do
+is code me console log add karo
+ye array ko filter karo sirf even numbers
+is function me type hints add karo
+ye code samjhao
+is file me kya ho raha hai batao
+yahan bug hai isko fix karo
+is function ka naam get users rakh do
+naya route banao users ke liye
+is class me constructor add karo
+ye promise ko await me badlo
+unused variables hata do
+comments add kar do is function par
+is function ko do chhote functions me tod do
+loop ko reverse me chalao
+null check add karo
+default value zero set karo
+is function ko export kar do
+import statement upar add karo
+ye callback hata ke promise use karo
+is query me limit laga do
+validation add karo email ke liye
+is component me useState add karo
+button par onClick handler lagao
+ye code optimize karo
+is function ka test likho
+async function me timeout add karo
+variable ko const bana do
+is object me naya key add karo
+ye string ko uppercase karo
+sorting ascending order me kar do
+is function ko recursive banao
+logging add karo har step par
+pichla change wapas karo
+undo kar do
