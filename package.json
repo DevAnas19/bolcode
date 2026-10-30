@@ -1,8 +1,8 @@
 {
   "name": "bolcode",
   "displayName": "BolCode",
-  "description": "Bolo, code ho jayega. Edit code by speaking in Hinglish, powered by Gnani Prisma.",
-  "version": "0.0.1",
+  "description": "Bolo, code ho jayega. Edit code by speaking Hinglish, Hindi or Gujarati. Powered by Gnani Prisma (speech to text) and Timbre (text to speech).",
+  "version": "0.1.0",
   "publisher": "devanas19",
   "license": "MIT",
   "engines": {
@@ -20,6 +20,10 @@
       {
         "command": "bolcode.listen",
         "title": "BolCode: Start / Stop Listening"
+      },
+      {
+        "command": "bolcode.checkSetup",
+        "title": "BolCode: Check Setup"
       },
       {
         "command": "bolcode.setGnaniKey",
@@ -126,11 +130,36 @@
   },
   "scripts": {
     "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./"
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile",
+    "package": "vsce package"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
     "@types/vscode": "^1.85.0",
     "typescript": "^5.4.0"
+  },
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DevAnas19/bolcode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DevAnas19/bolcode/issues"
+  },
+  "homepage": "https://github.com/DevAnas19/bolcode#readme",
+  "keywords": [
+    "voice",
+    "hinglish",
+    "hindi",
+    "gujarati",
+    "speech",
+    "gnani",
+    "accessibility",
+    "ai"
+  ],
+  "galleryBanner": {
+    "color": "#0f172a",
+    "theme": "dark"
   }
 }

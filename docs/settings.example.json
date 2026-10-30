@@ -1,0 +1,10 @@
+{
+  "bolcode.ffmpegPath": "C:\\ffmpeg\\bin\\ffmpeg.exe",
+  "bolcode.language": "en-IN",
+  "bolcode.llm.baseUrl": "https://api.groq.com/openai/v1",
+  "bolcode.llm.model": "openai/gpt-oss-120b",
+  "bolcode.voice.enabled": true,
+  "bolcode.voice.model": "timbre-v3.0",
+  "bolcode.voice.name": "Avinash",
+  "bolcode.voice.language": "hi-IN"
+}

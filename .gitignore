@@ -3,4 +3,3 @@ out/
 *.vsix
 test/audio/
 test/results.json
-.venv/

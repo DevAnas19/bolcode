@@ -1,3 +1,4 @@
+import { execFile } from 'child_process';
 import * as vscode from 'vscode';
 import { Recorder, listMicrophones } from './recorder';
 import { transcribe } from './prisma';
@@ -33,6 +34,21 @@ export function activate(ctx: vscode.ExtensionContext) {
   const idle = () => { state = 'idle'; render('$(mic) BolCode'); };
   idle();
 
+  const ffmpegPath = () => String(cfg().get('ffmpegPath') || 'ffmpeg');
+
+  // On Windows, pick a microphone automatically if none was chosen yet (handy on a new laptop).
+  async function resolveMic(): Promise<string> {
+    const saved = String(cfg().get('micDevice') || '');
+    if (saved || process.platform !== 'win32') { return saved; }
+    const mics = await listMicrophones(ffmpegPath());
+    if (mics.length === 0) {
+      throw new Error('No microphone found. Plug one in, then run "BolCode: Select Microphone".');
+    }
+    const preferred = mics.find(m => /microphone|headset|mic/i.test(m.label)) ?? mics[0];
+    out.appendLine(`Using microphone: ${preferred.label}`);
+    return preferred.value;
+  }
+
   let voiceWarned = false;
   async function say(text: string, force = false) {
     if (!force && !cfg().get<boolean>('voice.enabled')) { return; }
@@ -43,7 +59,7 @@ export function activate(ctx: vscode.ExtensionContext) {
         model: String(cfg().get('voice.model') || 'timbre-v3.0'),
         voice: String(cfg().get('voice.name') || 'Avinash'),
         language: String(cfg().get('voice.language') || 'hi-IN'),
-        ffmpegPath: String(cfg().get('ffmpegPath') || 'ffmpeg'),
+        ffmpegPath: ffmpegPath(),
         sampleRate: Number(cfg().get('voice.sampleRate') || 24000),
         log: m => out.appendLine(m)
       }, text);
@@ -142,11 +158,8 @@ export function activate(ctx: vscode.ExtensionContext) {
         try {
           const key = await getGnaniKey();
           if (!key) { return; }
-          recorder = new Recorder(
-            String(cfg().get('ffmpegPath') || 'ffmpeg'),
-            String(cfg().get('micDevice') || ''),
-            Number(cfg().get('maxRecordSeconds') ?? 20)
-          );
+          const mic = await resolveMic();
+          recorder = new Recorder(ffmpegPath(), mic, Number(cfg().get('maxRecordSeconds') ?? 20));
           recorder.start();
           state = 'recording';
           render('$(record) BolCode: listening… (press again to stop)', '', true);
@@ -179,11 +192,44 @@ export function activate(ctx: vscode.ExtensionContext) {
     }),
 
     vscode.commands.registerCommand('bolcode.setGnaniKey', () => askKey(GNANI_KEY, 'Gnani API key (from app.gnani.ai)')),
+    vscode.commands.registerCommand('bolcode.checkSetup', async () => {
+      out.show(true);
+      out.appendLine('--- BolCode setup check ---');
+      const ok = (m: string) => out.appendLine(`OK   ${m}`);
+      const bad = (m: string) => out.appendLine(`FIX  ${m}`);
+
+      await new Promise<void>(resolve => {
+        execFile(ffmpegPath(), ['-version'], { windowsHide: true }, (err, stdout) => {
+          if (err) { bad(`ffmpeg not found at "${ffmpegPath()}". Install it or set bolcode.ffmpegPath.`); }
+          else { ok(String(stdout).split('\n')[0]); }
+          resolve();
+        });
+      });
+
+      const mics = await listMicrophones(ffmpegPath());
+      if (mics.length > 0) { ok(`Microphones found: ${mics.map(m => m.label).join(', ')}`); }
+      else { bad('No microphones detected. Plug one in or check Windows sound settings.'); }
+      const saved = String(cfg().get('micDevice') || '');
+      out.appendLine(saved ? `INFO Saved microphone: ${saved}` : 'INFO No microphone saved; BolCode will pick one automatically.');
+
+      if (await ctx.secrets.get(GNANI_KEY)) { ok('Gnani API key is saved.'); }
+      else { bad('Gnani API key missing. Run "BolCode: Set Gnani API Key".'); }
+      const baseUrl = String(cfg().get('llm.baseUrl') || '');
+      const model = String(cfg().get('llm.model') || '');
+      if (baseUrl && model) { ok(`LLM: ${model} at ${baseUrl}`); }
+      else { bad('Set bolcode.llm.baseUrl and bolcode.llm.model in Settings.'); }
+      if ((await ctx.secrets.get(LLM_KEY)) || /localhost|127\.0\.0\.1/.test(baseUrl)) { ok('LLM API key is saved.'); }
+      else { bad('LLM API key missing. Run "BolCode: Set LLM API Key".'); }
+      out.appendLine(cfg().get<boolean>('voice.enabled')
+        ? `INFO Voice replies ON (${cfg().get('voice.model')}, voice ${cfg().get('voice.name')})`
+        : 'INFO Voice replies OFF (set bolcode.voice.enabled to true to turn on).');
+      out.appendLine('--- done ---');
+    }),
     vscode.commands.registerCommand('bolcode.testVoice', () => say('नमस्ते, मैं बोल कोड हूँ। बोलो, कोड हो जाएगा।', true)),
     vscode.commands.registerCommand('bolcode.setLlmKey', () => askKey(LLM_KEY, 'LLM API key')),
 
     vscode.commands.registerCommand('bolcode.selectMic', async () => {
-      const mics = await listMicrophones(String(cfg().get('ffmpegPath') || 'ffmpeg'));
+      const mics = await listMicrophones(ffmpegPath());
       if (mics.length === 0) {
         vscode.window.showErrorMessage('BolCode: no microphones found. Is ffmpeg installed and on PATH?');
         return;

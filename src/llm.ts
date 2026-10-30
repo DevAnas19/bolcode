@@ -34,7 +34,7 @@ function stripFences(text: string): string {
 
 const EDIT_SYSTEM = [
   'You are a precise code-editing engine inside an editor.',
-  'The user speaks commands in Hinglish (a Hindi and English mix, sometimes in Devanagari). Understand the intent.',
+  'The user speaks commands in Hinglish (a Hindi and English mix), Gujarati, or Hindi, in Latin or native script. Understand the intent.',
   'You receive a command and a code snippet. Apply the command to the snippet.',
   'Return ONLY the complete modified snippet. No markdown fences, no explanations.',
   'Keep the same indentation style, language and unrelated code unchanged.'
