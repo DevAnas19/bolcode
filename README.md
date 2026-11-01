@@ -9,7 +9,9 @@ their own language but write code in English.
 > Built for the Great Indian AI Internship Challenge with Gnani AI.
 > #GnaniAI #GreatIndianAIInternshipChallenge
 
-<!-- Add the demo GIF here after filming: ![demo](docs/demo.gif) -->
+**Demo video (3 min):** [Watch on LinkedIn](https://www.linkedin.com/feed/update/urn:li:activity:7522609014883479552/) · [Watch on X](https://x.com/Anas19a07/status/2116845849057935608)
+
+Built by [Anas Ansari](https://github.com/DevAnas19), a B.Tech CSE (AI/ML) student from Surat, India.
 
 ## What it does
 
@@ -24,6 +26,9 @@ Select some code, press **Ctrl+Alt+B** (Cmd+Alt+B on macOS), speak, press it aga
 
 Nothing is applied until you accept the diff.
 
+> Hindi and Hinglish are the tested languages. Gujarati commands (`bolcode.language` = `gu-IN`) are
+> supported by Prisma and by BolCode's command detection, but are **experimental** and not yet tested thoroughly.
+
 ## How it works
 
 ```
@@ -37,7 +42,7 @@ hotkey -> ffmpeg records the mic -> Gnani Prisma (speech to text)
   code terms like *async*, *useState*, *promise* (`src/vocab.ts`).
 - **Timbre** speaks short Hindi confirmations and summaries (beta).
 - The editing model is any **OpenAI-compatible** endpoint (set in settings), so you can point it at a hosted model
-  or at your own server running an open model such as Gnani's Evon.
+  or at your own server. (I have not tested Gnani's open Evon model here yet.)
 
 ## Install
 
@@ -85,7 +90,19 @@ BolCode: Start / Stop Listening, Check Setup, Select Microphone, Set Gnani API K
 `test/run_prisma_test.py` scores Prisma on 40 Hinglish coding commands (`test/commands.txt`): word error rate and
 code-term accuracy. Record the clips as `test/audio/01.wav` and so on, set `GNANI_API_KEY`, and run it.
 
-_Results: to be added after the test run._
+**My results** (40 commands, one speaker, one laptop and microphone, Prisma v2.5, `en-IN`):
+
+| Metric | Result |
+|---|---|
+| Code-term accuracy | 56 / 61 (91.8%) |
+| Average word error rate | 22.2% |
+| Exact transcript matches | 9 / 40 |
+
+Most of the word errors are spelling variants that do not change the meaning ("iss" for "is", "mein" for "me",
+"per" for "par", "use state" for "useState"). The real misses were code words: *async* heard as "asinc",
+*array* as "ra", *await* as "avaidh", *key* as "ki", and *undo* as "ando". A small correction layer
+(`src/normalize.ts`) fixes the known ones before the text reaches the LLM. This is a small sample from one voice,
+not a benchmark, so results will vary with accent, microphone and noise.
 
 ## Troubleshooting
 
@@ -94,6 +111,14 @@ _Results: to be added after the test run._
   Bluetooth earphones only record in their *Hands-Free* mode.
 - **Voice reply fails**: run **Check Setup**; the model and voice names must match what your Gnani account allows.
 - **LLM errors (401/404)**: re-enter the LLM key and check the model name.
+
+## Known limitations
+
+- Developed and tested on **Windows**. The macOS and Linux code paths exist but are untested.
+- Needs **ffmpeg** and a working microphone. Bluetooth earphones only record in their Hands-Free mode.
+- Spoken replies use Timbre (beta) and are in Hindi only.
+- Edits depend on the LLM you configure, so always review the diff before accepting.
+- Each voice command is one push-to-talk recording (up to 20 seconds by default), not continuous listening.
 
 ## Privacy
 
