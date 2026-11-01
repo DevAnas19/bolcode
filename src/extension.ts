@@ -5,6 +5,7 @@ import { transcribe } from './prisma';
 import { proposeEdit, explainCode, spokenSummary, LlmConfig } from './llm';
 import { speak } from './tts';
 import { detectIntent } from './intent';
+import { normalizeTranscript } from './normalize';
 import { DiffReviewer } from './diff';
 import { BIAS_WORDS } from './vocab';
 
@@ -97,9 +98,10 @@ export function activate(ctx: vscode.ExtensionContext) {
     return { baseUrl, model, apiKey };
   }
 
-  async function handleTranscript(transcript: string) {
+  async function handleTranscript(rawTranscript: string) {
+    const transcript = normalizeTranscript(rawTranscript);
     vscode.window.showInformationMessage(`🎙 ${transcript}`);
-    out.appendLine(`> ${transcript}`);
+    out.appendLine(transcript === rawTranscript ? `> ${transcript}` : `> ${transcript}   (heard: ${rawTranscript})`);
     const intent = detectIntent(transcript);
 
     if (intent === 'undo') {
