@@ -11,6 +11,8 @@ their own language but write code in English.
 
 **Demo video (3 min):** [Watch on LinkedIn](https://www.linkedin.com/feed/update/urn:li:activity:7522609014883479552/) · [Watch on X](https://x.com/Anas19a07/status/2116845849057935608)
 
+**One-page pitch:** [PITCH.md](PITCH.md) · [PDF](BolCode_Pitch.pdf)
+
 Built by [Anas Ansari](https://github.com/DevAnas19), a B.Tech CSE (AI/ML) student from Surat, India.
 
 ## What it does
